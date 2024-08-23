@@ -12,11 +12,15 @@ class ApiScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('API Data'),
+        title: const Text(
+          'API Data',
+          style: TextStyle(color: Colors.white),
+        ),
+        centerTitle: true,
+        backgroundColor: Colors.blueGrey,
       ),
       body: BlocProvider(
-        create: (context) => ApiBloc(apiService: ApiService())
-          ..add(FetchApiData()),
+        create: (context) => ApiBloc(apiService: ApiService())..add(FetchApiData()),
         child: BlocBuilder<ApiBloc, ApiState>(
           builder: (context, state) {
             if (state is ApiInitial) {
@@ -25,17 +29,33 @@ class ApiScreen extends StatelessWidget {
               return const Center(child: CircularProgressIndicator());
             } else if (state is ApiLoaded) {
               return ListView.builder(
+                padding: const EdgeInsets.all(8.0),
                 itemCount: state.apiModel.data?.length ?? 0,
                 itemBuilder: (context, index) {
                   final item = state.apiModel.data![index];
-                  return ListTile(
-                    title: Text(item.title ?? 'No Title'),
-                    // subtitle: item.thumbnail != null
-                    //     ? Image.network(item.thumbnail!.lqip ?? '')
-                    //     : null,
-                    trailing: item.timestamp != null
-                        ? Text(item.timestamp!.toLocal().toString())
-                        : null,
+                  return Card(
+                    elevation: 4.0,
+                    margin: const EdgeInsets.symmetric(vertical: 8.0),
+                    child: ListTile(
+                      contentPadding: const EdgeInsets.all(16.0),
+                      title: Text(
+                        item.title ?? 'No Title',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.bold,
+                          fontSize: 16.0,
+                        ),
+                      ),
+                      subtitle: item.timestamp != null
+                          ? Text(
+                              item.timestamp!.toLocal().toString(),
+                              style: const TextStyle(
+                                color: Colors.grey,
+                                fontSize: 14.0,
+                              ),
+                            )
+                          : null,
+                      isThreeLine: item.timestamp != null,
+                    ),
                   );
                 },
               );
